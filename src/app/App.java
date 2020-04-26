@@ -44,17 +44,6 @@ public class App {
 
         employeeList.forEach(employee -> System.out.println("Available employee : " + employee.getName()));
 
-        Queue<CallRequest> csQueue = new LinkedList<CallRequest>();
-        Queue<CallRequest> tlQueue = new LinkedList<CallRequest>();
-        Queue<CallRequest> pmQueue = new LinkedList<CallRequest>();
-
-        HashMap<Integer, Queue<CallRequest>> queueMap = new HashMap<Integer, Queue<CallRequest>>();
-        queueMap.put(1, csQueue);
-        queueMap.put(2, tlQueue);
-        queueMap.put(3, pmQueue);
-
-        System.out.println(queueMap);
-
         JobQueues jq = new JobQueues();
         jq.initialize();
         System.out.println(jq.customerServiceQueue());
@@ -101,14 +90,6 @@ public class App {
             Thread responseThread = new Thread(new ResponseCall(jq, employeeCollection));
             responseThread.start();
         }
-
-        // CallRequest cr = csQueue.poll();
-        // System.out.println("crpol " + cr.getUUID());
-        // cr = csQueue.poll();
-        // System.out.println("crpol " + cr.getUUID());
-
-
-        System.out.println("Hello Java");
 
         TimeUnit.SECONDS.sleep(5);
         callRequestCollection.getAllCallRequests().forEach(cr -> System.out.println("cr: " + cr.getUUID() + " process:" + cr.isProcessed()));

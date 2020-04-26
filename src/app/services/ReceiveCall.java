@@ -16,9 +16,11 @@ public class ReceiveCall implements Runnable {
 
     @Override
     public void run() {
-        CallHandler ch = new CallHandler(jobQueues, employees);
-        for(CallRequest callRequest: callRequests.getUnprocessCallRequests()) {
-            ch.dispatchCallRequestToQueueLevel(callRequest, 1);
+        synchronized(this) {
+            CallHandler ch = new CallHandler(jobQueues, employees);
+            for(CallRequest callRequest: callRequests.getUnprocessCallRequests()) {
+                ch.dispatchCallRequestToQueueLevel(callRequest, 1);
+            }
         }
     }
 }
