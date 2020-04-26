@@ -90,12 +90,12 @@ public class App {
         System.out.println("cr3 " + callRequest3.getUUID());
 
         for(CallRequest callRequest: callRequestList) {
-            Thread receiveThread = new Thread(new ReceiveCall(callRequest, queueMap, employeeCollection));
+            Thread receiveThread = new Thread(new ReceiveCall(callRequest, jq, employeeCollection));
             receiveThread.start();
         };
 
         for(Employee employee: employeeList) {
-            Thread responseThread = new Thread(new ResponseCall(employee, queueMap, employeeCollection));
+            Thread responseThread = new Thread(new ResponseCall(employee, jq, employeeCollection));
             responseThread.start();
         }
 
