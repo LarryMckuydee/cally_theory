@@ -3,24 +3,25 @@ package app.queues;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.concurrent.ArrayBlockingQueue;
 
 import app.models.CallRequest;
 
 public class JobQueues {
     // customer service queue
-    private Queue<CallRequest> csQueue;
+    private ArrayBlockingQueue<CallRequest> csQueue;
     // technical lead queue
-    private Queue<CallRequest> tlQueue;
+    private ArrayBlockingQueue<CallRequest> tlQueue;
     // product manager queue
-    private Queue<CallRequest> pmQueue;
+    private ArrayBlockingQueue<CallRequest> pmQueue;
 
-    private HashMap<Integer, Queue<CallRequest>> queueMap;
+    private HashMap<Integer, ArrayBlockingQueue<CallRequest>> queueMap;
 
     public JobQueues() {
-        this.csQueue = new LinkedList<CallRequest>();
-        this.tlQueue = new LinkedList<CallRequest>();
-        this.pmQueue = new LinkedList<CallRequest>();
-        this.queueMap = new HashMap<Integer, Queue<CallRequest>>();
+        this.csQueue = new ArrayBlockingQueue<CallRequest>(15);
+        this.tlQueue = new ArrayBlockingQueue<CallRequest>(15);
+        this.pmQueue = new ArrayBlockingQueue<CallRequest>(15);
+        this.queueMap = new HashMap<Integer, ArrayBlockingQueue<CallRequest>>();
     }
 
     public void initialize() {
@@ -29,19 +30,19 @@ public class JobQueues {
         this.queueMap.put(3, pmQueue);
     }
 
-    public Queue<CallRequest> customerServiceQueue() {
+    public ArrayBlockingQueue<CallRequest> customerServiceQueue() {
         return this.csQueue;
     }
 
-    public Queue<CallRequest> technicalLeadQueue() {
+    public ArrayBlockingQueue<CallRequest> technicalLeadQueue() {
         return this.tlQueue;
     }
 
-    public Queue<CallRequest> productManagerQueue() {
+    public ArrayBlockingQueue<CallRequest> productManagerQueue() {
         return this.pmQueue;
     }
 
-    public Queue<CallRequest> getQueueByLevel(int level) {
+    public ArrayBlockingQueue<CallRequest> getQueueByLevel(int level) {
         return this.queueMap.get(level);
     }
 
