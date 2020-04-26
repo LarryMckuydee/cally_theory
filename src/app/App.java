@@ -94,8 +94,8 @@ public class App {
             receiveThread.start();
         };
 
-        for(Employee employee: employeeList) {
-            Thread responseThread = new Thread(new ResponseCall(employee, jq, employeeCollection));
+        for(int i = 0; i < 3; i ++) {
+            Thread responseThread = new Thread(new ResponseCall(jq, employeeCollection));
             responseThread.start();
         }
 

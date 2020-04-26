@@ -15,13 +15,12 @@ public class ResponseCall implements Runnable {
     private EmployeeCollection employees;
     private Employee employee;
     
-    public ResponseCall(Employee employee, JobQueues jobQueues, EmployeeCollection employees) {
-        this.employee = employee;
+    public ResponseCall(JobQueues jobQueues, EmployeeCollection employees) {
         this.jobQueues = jobQueues;
         this.employees = employees;
     }
 
-    public void processCall() {
+    public void processCall(Employee employee) {
         CallRequest callRequest = jobQueues.getQueueByLevel(employee.getLevel()).poll();
 
         // if nothing in queue, do nothing
@@ -66,6 +65,10 @@ public class ResponseCall implements Runnable {
 
     @Override
     public void run() {
-        processCall();
+        while(!jobQueues.isAllQueuesEmpty()) {
+            for(Employee employee: employees.getAvailableEmployees()) {
+                processCall(employee);
+            }
+        }
     }
 }
