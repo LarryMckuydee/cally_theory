@@ -1,11 +1,6 @@
 package app.services;
 
 import java.util.Random;
-import java.util.concurrent.Callable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Queue;
-import java.util.stream.Collectors;
 
 import app.models.CallRequest;
 import app.models.Employee;
@@ -13,8 +8,6 @@ import app.queues.JobQueues;
 
 public class CallHandler {
     // pick a request and assign to queue
-    private Employee employee;
-    private CallRequest callRequest;
     private JobQueues jobQueues;
     private EmployeeCollection employees;
 
@@ -65,22 +58,16 @@ public class CallHandler {
     public void dispatchCallRequestToQueueLevel(CallRequest callRequest, int level) {
         // if it is not level 3 (PM) and size for current level queue is higher or equal to available size
         do {
-            if (jobQueues.getQueueByLevel(level).size() >= employees.getAvailableEmployeesByLevel(level).size()) {
+            if (level < 3 && jobQueues.getQueueByLevel(level).size() >= employees.getAvailableEmployeesByLevel(level).size()) {
                 level++;
                 continue;
             }
             
-            System.out.println("Current Thread ID- " + Thread.currentThread().getId() + " level " + level);
             jobQueues.getQueueByLevel(level).add(callRequest);
             callRequest.setAsIsProcessed();
-            System.out.println("CallRequest: " + callRequest.getUUID() + " been dispatch to queue level: " + level);
+            System.out.println("CallRequest: " + callRequest.getUUID() + " been dispatch to queue level: " + level + " by Thread: " + Thread.currentThread().getId());
             break;
         } while (level <= 3);
-        // if (level < 3 && queueMap.get(level).size() >= employees.getAvailableEmployeesByLevel(level).size()) {
-        //     dispatchToQueueLevel(level++);
-        // } else {
-        //     queueMap.get(level).add(callRequest);
-        // }
     }
 
     private int rollDice() {
