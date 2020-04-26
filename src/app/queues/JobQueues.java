@@ -24,28 +24,65 @@ public class JobQueues {
         this.queueMap = new HashMap<Integer, ArrayBlockingQueue<CallRequest>>();
     }
 
+    /** 
+     * Initialize queue based on level where:
+     * 1 => Customer Service Queue
+     * 2 => Technical Lead Queue
+     * 3 => Product Manager Queue
+     */
     public void initialize() {
         this.queueMap.put(1, csQueue);
         this.queueMap.put(2, tlQueue);
         this.queueMap.put(3, pmQueue);
     }
 
+    
+    /** 
+     * Return Customer Service Queue
+     * 
+     * @return ArrayBlockingQueue<CallRequest>
+     */
     public ArrayBlockingQueue<CallRequest> customerServiceQueue() {
         return this.csQueue;
     }
 
+    
+    /** 
+     * Return Technical Lead Queue
+     * 
+     * @return ArrayBlockingQueue<CallRequest>
+     */
     public ArrayBlockingQueue<CallRequest> technicalLeadQueue() {
         return this.tlQueue;
     }
 
+    
+    /** 
+     * Return Product Manager Queue
+     * 
+     * @return ArrayBlockingQueue<CallRequest>
+     */
     public ArrayBlockingQueue<CallRequest> productManagerQueue() {
         return this.pmQueue;
     }
 
+    
+    /** 
+     * Return queue based on level given
+     * 
+     * @param level
+     * @return ArrayBlockingQueue<CallRequest>
+     */
     public ArrayBlockingQueue<CallRequest> getQueueByLevel(int level) {
         return this.queueMap.get(level);
     }
 
+    
+    /** 
+     * Return true if all the queues is empty (Customer Service Queue, Technical Lead Queue, Product Manager Queue)
+     * 
+     * @return boolean
+     */
     public boolean isAllQueuesEmpty() {
         return (this.csQueue.size() < 1 && this.tlQueue.size() < 1 && this.pmQueue.size() < 1);
     }

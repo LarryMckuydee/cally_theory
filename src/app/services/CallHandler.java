@@ -16,6 +16,13 @@ public class CallHandler {
         this.employees = employees;
     }
 
+    
+    /** 
+     * Process call from relevant queue based on Employee level
+     * dice will be roll, if result > 3, mean resolve
+     * 
+     * @param employee
+     */
     public void processCall(Employee employee) {
         CallRequest callRequest = jobQueues.getQueueByLevel(employee.getLevel()).poll();
 
@@ -35,11 +42,26 @@ public class CallHandler {
         }
     }
 
+    
+    /** 
+     * Mark CallRequest as resolved by employee
+     * 
+     * @param callRequest
+     * @param employee
+     */
     private void solve(CallRequest callRequest, Employee employee) {
         // mark as resolve
         callRequest.resolved(employee);
     }
 
+    
+    /** 
+     * Mark CallRequest as unresolve by employee, if employee level < 3 (not product Manager)
+     * CallRequest will be dispatch into higher level queue, else will be treat as case that can't be solve
+     * 
+     * @param callRequest
+     * @param employee
+     */
     private void failToSolve(CallRequest callRequest, Employee employee) {
         if (employee.getLevel() < 3) {
             // mark as not resolve and push to higher level of employee to handle
@@ -55,6 +77,13 @@ public class CallHandler {
         callRequest.setAsCantBeSolve();
     }
 
+    
+    /** 
+     * Dispatch CallRequest to Queue based on level given
+     * 
+     * @param callRequest
+     * @param level
+     */
     public void dispatchCallRequestToQueueLevel(CallRequest callRequest, int level) {
         // if it is not level 3 (PM) and size for current level queue is higher or equal to available size
         do {
@@ -70,6 +99,12 @@ public class CallHandler {
         } while (level <= 3);
     }
 
+    
+    /** 
+     * Return a random number between 1 to 6
+     * 
+     * @return int
+     */
     private int rollDice() {
         Random rand = new Random();
         return rand.nextInt(6 - 1 + 1) + 1;

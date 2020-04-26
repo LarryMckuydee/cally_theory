@@ -20,6 +20,7 @@ import app.services.ResponseCall;
 
 public class App {
     public static void main(String[] args) throws Exception {
+        // Create employees
         CustomerService kelly = new CustomerService("Kelly", "kelly@gmail.com");
         CustomerService sam = new CustomerService("Sam", "sam@gmail.com");
         CustomerService sebastian = new CustomerService("Sebastian", "sebastian@gmail.com");
@@ -39,16 +40,19 @@ public class App {
         // kelly.engaging();
         // larry.engaging();
 
+        // put employee into employee collection (just mocking collection from database)
         EmployeeCollection employeeCollection = new EmployeeCollection(Arrays.asList(employees));
         List<Employee> employeeList = employeeCollection.getAvailableEmployees();
 
         employeeList.forEach(employee -> System.out.println("Available employee : " + employee.getName()));
 
+        // Initialize job queues
         JobQueues jq = new JobQueues();
         jq.initialize();
         System.out.println(jq.customerServiceQueue());
 
 
+        // creates bunch of CallRequest to simulate calls
         CallRequest callRequest1 = new CallRequest();
         CallRequest callRequest2 = new CallRequest();
         CallRequest callRequest3 = new CallRequest();
@@ -75,6 +79,7 @@ public class App {
             callRequest11
         };
 
+        // put CallRequest into call request collection (just mocking collection from database)
         CallRequestCollection callRequestCollection = new CallRequestCollection(Arrays.asList(callRequests));
         callRequestCollection.getAllCallRequests().forEach(cr -> System.out.println(cr.getUUID()));
 
