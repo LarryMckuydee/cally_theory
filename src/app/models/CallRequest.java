@@ -8,12 +8,16 @@ public class CallRequest {
     private boolean isResolved;
     private Employee assignedTo;
     private boolean isAssigned;
+    private boolean cantBeSolve;
+    private boolean isProcessed;
 
     public CallRequest() {
         this.isResolved = false;
         this.resolvedBy = null;
         this.assignedTo = null;
         this.isAssigned = false;
+        this.cantBeSolve = false;
+        this.isProcessed = false;
         this.uuid = UUID.randomUUID();
     }
 
@@ -36,6 +40,23 @@ public class CallRequest {
     
     public boolean isResolved() {
         return this.isResolved;
+    }
+
+    public boolean cantBeSolve() {
+        return this.cantBeSolve;
+    }
+
+    public boolean isProcessed() {
+        return this.isProcessed;
+    }
+
+    public void setAsCantBeSolve() {
+        this.cantBeSolve = true;
+        System.out.println("CallRequest: " + getUUID() + " is unsolvable.");
+    }
+
+    public void setAsIsProcessed() {
+        this.isProcessed = true;
     }
 
     public Employee assignedTo(Employee employee) {

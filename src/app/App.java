@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.TimeUnit;
 
 import app.models.CallRequest;
 import app.models.Employee;
@@ -12,6 +13,7 @@ import app.models.CustomerService;
 import app.models.TechnicalLead;
 import app.queues.JobQueues;
 import app.models.ProductManager;
+import app.services.CallRequestCollection;
 import app.services.EmployeeCollection;
 import app.services.ReceiveCall;
 import app.services.ResponseCall;
@@ -84,15 +86,16 @@ public class App {
             callRequest11
         };
 
-        List<CallRequest> callRequestList = Arrays.asList(callRequests);
-        System.out.println("cr1 " + callRequest1.getUUID());
-        System.out.println("cr2 " + callRequest2.getUUID());
-        System.out.println("cr3 " + callRequest3.getUUID());
+        CallRequestCollection callRequestCollection = new CallRequestCollection(Arrays.asList(callRequests));
+        callRequestCollection.getAllCallRequests().forEach(cr -> System.out.println(cr.getUUID()));
 
-        for(CallRequest callRequest: callRequestList) {
-            Thread receiveThread = new Thread(new ReceiveCall(callRequest, jq, employeeCollection));
+
+        for(int i = 0; i < 3; i ++) {
+            Thread receiveThread = new Thread(new ReceiveCall(callRequestCollection, jq, employeeCollection));
             receiveThread.start();
         };
+
+        TimeUnit.SECONDS.sleep(5);
 
         for(int i = 0; i < 3; i ++) {
             Thread responseThread = new Thread(new ResponseCall(jq, employeeCollection));
@@ -106,5 +109,8 @@ public class App {
 
 
         System.out.println("Hello Java");
+
+        TimeUnit.SECONDS.sleep(5);
+        callRequestCollection.getAllCallRequests().forEach(cr -> System.out.println("cr: " + cr.getUUID() + " process:" + cr.isProcessed()));
     }
 }

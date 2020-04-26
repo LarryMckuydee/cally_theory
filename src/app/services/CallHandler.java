@@ -9,65 +9,82 @@ import java.util.stream.Collectors;
 
 import app.models.CallRequest;
 import app.models.Employee;
+import app.queues.JobQueues;
 
-public class CallHandler implements Callable {
+public class CallHandler {
     // pick a request and assign to queue
-    private Thread t;
     private Employee employee;
-    private HashMap<Integer,Queue<CallRequest>> queueMap;
-    private int level;
-    private Queue<CallRequest> currentQueue;
+    private CallRequest callRequest;
+    private JobQueues jobQueues;
+    private EmployeeCollection employees;
 
-    //public CallHandler(Employee employee, HashMap<Integer,Queue<CallRequest>> queueMap) {
-    public CallHandler(CallRequest employee, HashMap<Integer,Queue<CallRequest>> queueMap) {
-        //this.employee = employee;
-        this.queueMap = queueMap;
-        this.level = 1;
-        this.currentQueue = queueMap.get(this.level);
+    public CallHandler(JobQueues jobQueues, EmployeeCollection employees) {
+        this.jobQueues = jobQueues;
+        this.employees = employees;
     }
 
-    private void dispatchCall(CallRequest callRequest, Queue<CallRequest> queue) {
-        queue.add(callRequest);
-    }
-    
-    private void processCall(Employee employee, Queue<CallRequest> queue) {
-        CallRequest cr = queue.poll();
-        cr.assignedTo(employee);
+    public void processCall(Employee employee) {
+        CallRequest callRequest = jobQueues.getQueueByLevel(employee.getLevel()).poll();
+
+        // if nothing in queue, do nothing
+        if (callRequest == null) {
+            return;
+        }
+
+        callRequest.assignedTo(employee);
+        
+        // engaging call
+        // if dice bigger than 3 problem solve, else problem is not solve
+        if (rollDice() > 3) {
+            solve(callRequest, employee);
+        } else {
+            failToSolve(callRequest, employee);
+        }
     }
 
-    // private CallRequest processCall(CallRequest callRequest) {
-    //     // if roll dice number bigger than 3 determine the issue resolve else if not resolve
-    //     if (rollDice() > 3) {
-    //         callRequest.resolved(employee);
-    //     }     
+    private void solve(CallRequest callRequest, Employee employee) {
+        // mark as resolve
+        callRequest.resolved(employee);
+    }
 
-    //     return callRequest;
-    // }
-    
+    private void failToSolve(CallRequest callRequest, Employee employee) {
+        if (employee.getLevel() < 3) {
+            // mark as not resolve and push to higher level of employee to handle
+            callRequest.unresolved(employee);
+            // dispatch to higher level queue
+            dispatchCallRequestToQueueLevel(callRequest, employee.getLevel() + 1);
+
+            return;
+        }
+
+        // if is level 3 (PM) and still unable to resolve, will be mark as can't be solve
+        callRequest.unresolved(employee);        
+        callRequest.setAsCantBeSolve();
+    }
+
+    public void dispatchCallRequestToQueueLevel(CallRequest callRequest, int level) {
+        // if it is not level 3 (PM) and size for current level queue is higher or equal to available size
+        do {
+            if (jobQueues.getQueueByLevel(level).size() >= employees.getAvailableEmployeesByLevel(level).size()) {
+                level++;
+                continue;
+            }
+            
+            System.out.println("Current Thread ID- " + Thread.currentThread().getId() + " level " + level);
+            jobQueues.getQueueByLevel(level).add(callRequest);
+            callRequest.setAsIsProcessed();
+            System.out.println("CallRequest: " + callRequest.getUUID() + " been dispatch to queue level: " + level);
+            break;
+        } while (level <= 3);
+        // if (level < 3 && queueMap.get(level).size() >= employees.getAvailableEmployeesByLevel(level).size()) {
+        //     dispatchToQueueLevel(level++);
+        // } else {
+        //     queueMap.get(level).add(callRequest);
+        // }
+    }
+
     private int rollDice() {
         Random rand = new Random();
         return rand.nextInt(6 - 1 + 1) + 1;
     }
-
-    private void solve(CallRequest callRequest) {
-        callRequest.resolved(employee);
-    }
-
-    private void notSolve(CallRequest callRequest) {
-        // failed to solve, push to 1 queue higher
-
-    }
-
-    @Override
-    public Object call() throws Exception {
-        // TODO Auto-generated method stub
-        return null;
-    }
-    // @Override
-    // public void call() {
-    //     // TODO Auto-generated method stub
-    //     System.out.println("Assigning call for employee " + employee.getName());
-    //     dispatchCall(callRequest, currentQueue);
-    //     System.out.println("Done assigned for employee " + employee.getName());
-    // }
 }
