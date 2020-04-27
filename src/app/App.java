@@ -81,8 +81,8 @@ public class App {
         callRequestCollection.getAllCallRequests().forEach(cr -> System.out.println(cr.getUUID()));
 
 
-        for(int i = 0; i < 1; i ++) {
-            Thread receiveThread = new Thread(new ReceiveCall(callRequestCollection, jq, employeeCollection));
+        for(CallRequest callRequest:callRequestCollection.getUnprocessCallRequests()) {
+            Thread receiveThread = new Thread(new ReceiveCall(callRequest, jq, employeeCollection));
             receiveThread.start();
         };
 
