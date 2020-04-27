@@ -2,6 +2,7 @@ package app.services;
 
 import app.models.Employee;
 import app.queues.JobQueues;
+import app.models.collections.EmployeeCollection;
 
 public class ResponseCall implements Runnable {
     private JobQueues jobQueues;

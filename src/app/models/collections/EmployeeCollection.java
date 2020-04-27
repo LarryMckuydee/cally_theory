@@ -1,4 +1,4 @@
-package app.services;
+package app.models.collections;
 
 import java.util.List;
 import java.util.stream.Collectors;

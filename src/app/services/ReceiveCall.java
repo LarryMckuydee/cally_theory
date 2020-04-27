@@ -2,6 +2,8 @@ package app.services;
 
 import app.models.CallRequest;
 import app.queues.JobQueues;
+import app.models.collections.EmployeeCollection;
+import app.models.collections.CallRequestCollection;
 
 public class ReceiveCall implements Runnable {
     private JobQueues jobQueues;

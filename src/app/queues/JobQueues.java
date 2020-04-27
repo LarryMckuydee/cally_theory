@@ -8,6 +8,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import app.models.CallRequest;
 
 public class JobQueues {
+    private int capacity;
     // customer service queue
     private ArrayBlockingQueue<CallRequest> csQueue;
     // technical lead queue
@@ -17,10 +18,11 @@ public class JobQueues {
 
     private HashMap<Integer, ArrayBlockingQueue<CallRequest>> queueMap;
 
-    public JobQueues() {
-        this.csQueue = new ArrayBlockingQueue<CallRequest>(15);
-        this.tlQueue = new ArrayBlockingQueue<CallRequest>(15);
-        this.pmQueue = new ArrayBlockingQueue<CallRequest>(15);
+    public JobQueues(int capacity) {
+        this.capacity = capacity;
+        this.csQueue = new ArrayBlockingQueue<CallRequest>(capacity);
+        this.tlQueue = new ArrayBlockingQueue<CallRequest>(capacity);
+        this.pmQueue = new ArrayBlockingQueue<CallRequest>(capacity);
         this.queueMap = new HashMap<Integer, ArrayBlockingQueue<CallRequest>>();
     }
 

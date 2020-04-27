@@ -1,10 +1,7 @@
 package app;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 import java.util.concurrent.TimeUnit;
 
 import app.models.CallRequest;
@@ -13,8 +10,8 @@ import app.models.CustomerService;
 import app.models.TechnicalLead;
 import app.queues.JobQueues;
 import app.models.ProductManager;
-import app.services.CallRequestCollection;
-import app.services.EmployeeCollection;
+import app.models.collections.CallRequestCollection;
+import app.models.collections.EmployeeCollection;
 import app.services.ReceiveCall;
 import app.services.ResponseCall;
 
@@ -47,7 +44,7 @@ public class App {
         employeeList.forEach(employee -> System.out.println("Available employee : " + employee.getName()));
 
         // Initialize job queues
-        JobQueues jq = new JobQueues();
+        JobQueues jq = new JobQueues(15);
         jq.initialize();
         System.out.println(jq.customerServiceQueue());
 
