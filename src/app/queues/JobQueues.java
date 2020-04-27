@@ -78,7 +78,15 @@ public class JobQueues {
     public ArrayBlockingQueue<CallRequest> getQueueByLevel(int level) {
         return this.queueMap.get(level);
     }
-
+    
+    /** 
+     * Return capacity
+     * 
+     * @return int
+     */
+    public int getCapacity() {
+        return this.capacity;
+    }
     
     /** 
      * Return true if all the queues is empty (Customer Service Queue, Technical Lead Queue, Product Manager Queue)
